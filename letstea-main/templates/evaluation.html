@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<!--	added logo and changed title-->
+    <link rel="shortcut icon" type="x-icon" href="{{ url_for('static', filename='Studio-Project black.png') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LETSTEA</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- Font Awesome -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #FFB0B0; /* Pastel pink background */
+            color: #4A4A4A; /* Darker grey text for contrast */
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace; /* Typewriter font */
+        }
+
+        .quiz-container {
+        padding-top:2rem;
+            flex-grow: 1; /* Allow it to grow to fill available space */
+            max-height: 80vh; /* Set a max height */
+            overflow-y: auto; /* Allow vertical scrolling */
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 85%;
+            margin: auto;
+            scrollbar-width: none; /* For Firefox */
+            background-color: #FFE6E6; /* Slightly lighter pastel pink for chat window */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+         .quiz-container::-webkit-scrollbar {
+        display: none; /* For Chrome/Safari */
+    }
+
+        h2 {
+            font-size: 5vh;
+            color: black; /* Soft pastel pink color */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 0 2rem;
+        }
+
+        .question p {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .answer-area {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .answer-area input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ffb0b0;
+            background-color: #fafafa;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .answer-area input:hover {
+            background-color: #ffb0b0;
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .answer-area input:focus {
+            outline: none;
+        }
+
+        .score {
+            position: absolute;
+            right: 10px;
+            top: 30%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4A4A4A;
+        }
+
+        /* Comment area styling */
+        .comment {
+            font-size: 0.8rem; /* Smaller font size for comments */
+            color: #555; /* Slightly lighter color for comments */
+            margin-top: 5px;
+            font-style: italic; /* Italic style for comments */
+        }
+
+        /* Input Group Styling */
+        .input-group {
+            height: 7vh; /* Fixed height for the input group */
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Align input and button vertically */
+            width: 100%;
+            padding: 0 1rem; /* Add padding */
+            margin: auto;
+            gap: 10px; /* Space between input and button */
+            box-sizing: border-box; /* Include padding in element size */
+        }
+
+        /* Button Styling */
+        .input-group button {
+            font-family: 'Courier New', Courier, monospace; /* Typewriter font */
+            background-color: #FFFFFF;
+            color: #000000;
+            border: none;
+            padding: 0.5rem;
+            padding-left: 1.5rem;
+            border-radius: 30px;
+            width: 80%;
+            margin-right: 0.5rem;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+            outline: none; /* Disable the black border */
+        }
+
+        .input-group button:hover {
+            background-color: #ff8e8e; /* Slightly darker pink on hover */
+            transform: scale(1.02); /* Slightly increase the size */
+        }
+
+        /* Media Query for Responsiveness */
+        @media screen and (max-width: 768px) {
+            .quiz-container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="quiz-questions"></div>
+    </div>
+   <div class="input-group">
+    <button id="action-btn" style="display:none;">Action</button>
+</div>
+    <script>
+        const evaluationData = {{ eval | tojson }}; // Assuming eval is a JSON array passed from your server
+
+        function populateEvaluation() {
+            const quizQuestionsDiv = document.getElementById("quiz-questions");
+
+            evaluationData.forEach((item, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+
+                const questionText = document.createElement('p');
+                questionText.textContent = `${index + 1}. ${item[0]}`;
+                questionDiv.appendChild(questionText);
+
+                const answerArea = document.createElement('div');
+                answerArea.classList.add('answer-area');
+
+                const answerInput = document.createElement('input');
+                answerInput.readOnly = true;
+                answerInput.type = 'text';
+                answerInput.value = item[1];
+
+                // Dynamically change the border color based on the score
+                const score = item[2];
+                if (score <= 0.3) {
+                    answerInput.style.borderColor = 'red';
+                } else if (score <= 0.5) {
+                    answerInput.style.borderColor = 'orange';
+                } else if (score <= 0.7) {
+                    answerInput.style.borderColor = 'lightgreen';
+                } else {
+                    answerInput.style.borderColor = 'green';
+                }
+
+                const scoreText = document.createElement('span');
+                scoreText.classList.add('score');
+                scoreText.textContent = `${score}/1`;
+
+                // Add comment under answer (not in input)
+                const commentText = document.createElement('div');
+                commentText.classList.add('comment');
+                commentText.textContent = item[3] || 'No comment provided'; // If no comment, display default message
+
+                answerArea.appendChild(answerInput);
+                answerArea.appendChild(scoreText);
+                answerArea.appendChild(commentText); // Append the comment text
+                questionDiv.appendChild(answerArea);
+                quizQuestionsDiv.appendChild(questionDiv);
+            });
+
+        }
+
+        const code = {{ code }};
+        const actionBtn = document.getElementById('action-btn');
+
+        if (code === 0) {
+            actionBtn.style.display = 'inline-block';
+            actionBtn.textContent = 'Revise Current Topic';
+            actionBtn.onclick = function() {
+                window.parent.location.href = '/learn';
+            };
+        } else if (code === 1) {
+            actionBtn.style.display = 'inline-block';
+            actionBtn.textContent = 'Go to Next Topic';
+            actionBtn.onclick = function() {
+                window.parent.location.href = '/learn';
+            };
+        }
+
+        window.onload = function() {
+            populateEvaluation();
+        };
+document.addEventListener('click', () => {
+parent.postMessage('iframe-click', '*');
+});    </script>
+<script src="{{ url_for('static', filename='sessionHandler.js') }}"></script>
+
+
+
+
+</body>
+</html>

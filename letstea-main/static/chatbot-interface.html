@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.1/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+    body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh; /* Full viewport height */
+        margin: 0;
+        background-color: #FFB0B0; /* Pastel pink background */
+        color: #4A4A4A; /* Darker grey text for contrast */
+        box-sizing: border-box;
+        font-family: 'Courier New', Courier, monospace; /* Typewriter font */
+
+    }
+
+    .body {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+
+    #chat-window {
+        flex-grow: 1; /* Allow it to grow to fill available space */
+        max-height: 80vh; /* Set a max height for the chat window */
+        overflow-y: auto; /* Allow vertical scrolling */
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        width: 85%;
+        margin: auto;
+        background-color: #FFE6E6; /* Slightly lighter pastel pink for chat window */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #message-list {
+        max-height: 100%; /* Use full height of chat-window */
+        background-color: #FFE6E6;
+        overflow-y: auto; /* Enable scrolling when messages exceed height */
+        flex-grow: 1; /* Allow it to fill available space */
+        display: flex;
+        flex-direction: column;
+        scrollbar-width: none; /* For Firefox */
+        padding: 2rem;
+    }
+
+    #message-list::-webkit-scrollbar {
+        display: none; /* For Chrome/Safari */
+    }
+
+    .message {
+        max-width: 50%;
+        background-color: #FFb0b0; /* Soft pink for user messages */
+        color: #000000;
+        padding: 0.5rem;
+        border-radius: 10px;
+        align-self: flex-end;
+        margin-left: auto;
+        margin-top: 1rem;
+
+    }
+
+    .bot-message {
+        max-width: 80%;
+        background-color: #ffffff; /* Light pink for bot messages */
+        color: #000000; /* Grey text */
+        padding: 0.5rem;
+        border-radius: 10px;
+        align-self: flex-start;
+        margin-right: auto;
+        margin-top: 1rem;
+    }
+
+    .loading-animation {
+        display: flex;
+        justify-content: center;
+        padding: 0.5rem;
+    }
+
+    .loading-dots {
+        display: flex;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        margin: 0 3px;
+        border-radius: 50%;
+        background-color: #000000; /* Grey dots for animation */
+        animation: loading 1s infinite;
+    }
+
+    .dot:nth-child(1) {
+        animation-delay: 0s;
+    }
+
+    .dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes loading {
+        0%, 80%, 100% {
+            transform: scale(1);
+        }
+        40% {
+            transform: scale(1.5);
+        }
+    }
+
+    .input-group {
+        height: 6vh;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 0 0 1rem 0;
+        margin: auto;
+    }
+
+    .input-group input {
+        font-family: 'Courier New', Courier, monospace; /* Typewriter font */
+        background-color: #FFFFFF;
+        color: #000000;
+        border: none;
+        padding: 0.5rem;
+        padding-left:1.5rem;
+        border-radius: 30px;
+        width: 80%;
+        margin-right: 0.5rem;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+        outline: none; /* Disable the black border */
+
+    }
+
+    .input-group button {
+        font-family: 'Courier New', Courier, monospace; /* Typewriter font */
+        background-color: #FFB0B0; /* Base pink for buttons */
+        color: #000000; /* Grey text */
+        border: none;
+        padding: 0.5rem 1rem;
+        margin-left: 0.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 900;
+        position: relative;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .input-group button:active {
+        background-color: #FFD6D6; /* Lighter pink when active */
+    }
+
+    .input-group button.active {
+        background-color: #FF8888; /* Slightly brighter pink for active button */
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(255, 176, 176, 0.9); /* Toast matches theme */
+        color: #4A4A4A; /* Grey text */
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: none;
+        z-index: 1000;
+    }
+
+    .input-group button#next-button  {
+        font-family: 'Courier New', Courier, monospace;
+        visibility: hidden;
+        background-color: #FFB0B0;
+        color: #000000;
+        border: none;
+        padding: 0.5rem 1rem;
+        margin-left: 0.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 900;
+        position: relative;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .input-group button#next-button:active {
+        background-color: #FFD6D6;
+    }
+
+         .loading-screen {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: auto;
+        height: auto;
+        display: flex;
+        text-align: center;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        padding: 2rem;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #FFB0B0;
+        border-top: 5px solid #FF8888;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+  .loading-text {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        color: #4A4A4A;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+}
+
+</style>
+</head>
+<body>
+
+<div class="body">
+    <div id="chat-window">
+        <div id="message-list">
+
+        </div>
+         <div id = 'loader' class="loading-screen">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Hold on, the teacher’s grabbing a coffee... Just kidding!</div>
+            </div>
+    </div>
+</div>
+<div class="input-group">
+    <input
+        type="text"
+        id="message-input"
+        placeholder="Type your message here..."/>
+    <button id="action-button">
+        <i style='font-size:20px' class='fas fa-microphone'></i>
+    </button>
+    <button id="next-button">Next</button>
+</div>
+<div class="toast" id="toast">Couldn't understand, please try again.</div>
+
+<script>
+
+    const nextButton = document.getElementById('next-button');
+    let topic ='';
+    const actionButton = document.getElementById('action-button');
+    const messageInput = document.getElementById('message-input');
+    const messageList = document.getElementById('message-list');
+    const toast = document.getElementById('toast');
+    const userName = sessionStorage.getItem('username');
+    let mediaRecorder;
+    let audioChunks = [];
+    let messageHistory = []; // Default to an empty array
+
+
+    // Set microphone icon
+    function setMicIcon() {
+        actionButton.innerHTML = "<i style='font-size:20px' class='fas fa-microphone'></i>";
+    }
+
+    // Set send text
+    function setSendText() {
+        actionButton.innerHTML = "Send";
+    }
+
+    // Handle input changes and button behavior
+    messageInput.addEventListener('input', () => {
+        messageInput.value.trim() === "" ? setMicIcon() : setSendText();
+    });
+
+    // Handle button actions for both text send and audio record
+    actionButton.addEventListener('mousedown', () => {
+        if (messageInput.value.trim() === "") {
+            startVoiceRecording(); // Start voice recording
+        } else {
+            sendMessage(messageInput.value);
+            messageInput.value = ""; // Clear input after sending
+            setMicIcon();
+        }
+    });
+
+    actionButton.addEventListener('mouseup', () => {
+        if (messageInput.value.trim() === "") {
+            stopVoiceRecording(); // Stop recording and send audio
+        }
+    });
+
+    // Send message when pressing enter key
+    messageInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter' && messageInput.value.trim() !== "") {
+            sendMessage(messageInput.value);
+            messageInput.value = ""; // Clear input after sending
+            setMicIcon();
+        }
+    });
+
+    // Show toast notification
+    function showToast(message) {
+        toast.textContent = message;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000); // Hide after 3 seconds
+    }
+
+    // Audio recording start
+    async function startVoiceRecording() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            mediaRecorder.start();
+
+            mediaRecorder.ondataavailable = (event) => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'audio.wav');
+
+                const response = await fetch('/process-audio', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.transcription) {
+                    sendMessage(data.transcription); // Send transcription as user input
+                } else {
+                    showToast("An error occurred");
+                }
+            };
+
+            mediaRecorder.onerror = (event) => {
+                console.error('Recording error: ' + event.error);
+                showToast("Couldn't understand, please try again.");
+            };
+        } catch (err) {
+            console.error('Microphone access error: ' + err);
+            showToast("Couldn't access microphone.");
+        }
+    }
+
+    function stopVoiceRecording() {
+        if (mediaRecorder) {
+            mediaRecorder.stop();
+        }
+    }
+
+
+async function sendMessage(message) {
+topic = localStorage.getItem('sharedTopic');
+let code = 0;
+pregtopic = localStorage.getItem('progressTopic');
+if (topic === pregtopic){
+code=1;
+}
+
+
+const userData = JSON.parse(sessionStorage.getItem('userData'));
+    if (message === "initprompt") {
+        try {
+              topic = localStorage.getItem('sharedTopic');
+              pregtopic = localStorage.getItem('progressTopic');
+              if (topic !== pregtopic){
+                   messageHistory.push({ role: 'system', content: "the topic is done previously and the user only want to revise this topic." });
+                   }
+            messageHistory.push({ role: 'user', content: "initprompt" });
+            const response = await fetch('/teach', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ history: messageHistory, userData: userData, code: code, tempcode : 0 })
+
+            });
+<!---->
+            if (!response.ok) throw new Error("Network response error");
+            const data = await response.json();
+            messageHistory.push({ role: 'assistant', content: data.message });
+            document.getElementById('loader').style.display = 'none';
+            displayBotMessage(data.message);
+        } catch (error) {
+            console.error("Error:", error);
+            displayBotMessage("Error: Unable to fetch response.");
+        }
+        return; // Exit after handling init prompt
+    }
+
+
+    // Push user message to history
+    messageHistory.push({ role: 'user', content: message });
+    const userMessage = document.createElement('div');
+    userMessage.className = 'message';
+    userMessage.textContent = message;
+    messageList.appendChild(userMessage);
+    messageList.scrollTop = messageList.scrollHeight;
+
+    // Show loading animation
+    const loadingContainer = document.createElement('div');
+    loadingContainer.className = 'loading-animation';
+    loadingContainer.innerHTML = `
+        <div class="loading-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>`;
+    messageList.appendChild(loadingContainer);
+    messageList.scrollTop = messageList.scrollHeight;
+
+    try {
+        const response = await fetch('/teach', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history: messageHistory, userData: userData, code:code, tempcode : 1 })
+        });
+
+        if (!response.ok) throw new Error("Network response error");
+
+        const data = await response.json();
+        messageList.removeChild(loadingContainer); // Remove loading animation
+
+        if (data.message) { // Check if message exists before displaying
+            messageHistory.push({ role: 'assistant', content: data.message });
+            displayBotMessage(data.message);
+        } else {
+            displayBotMessage("No response from the bot.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        messageList.removeChild(loadingContainer); // Remove loading animation on error
+        displayBotMessage("Error: Unable to fetch response.");
+    }
+}
+    // Function to display bot message
+    function displayBotMessage(response) {
+        const botMessage = document.createElement('div');
+        botMessage.className = 'bot-message';
+        botMessage.innerHTML = DOMPurify.sanitize(response); // Sanitize and set the HTML
+        messageList.appendChild(botMessage);
+        messageList.scrollTop = messageList.scrollHeight;
+    }
+
+// Function to send data via form submission
+function sendQuizData(topicName, chatHistory) {
+    const data = {
+        topicname: topicName,
+        chathistory: chatHistory
+    };
+
+    // Create a new form element
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/quiz';  // The route where the form should be submitted
+
+    // Create hidden input fields for the data
+    const input1 = document.createElement('input');
+    input1.type = 'hidden';
+    input1.name = 'questiondata';
+    input1.value = JSON.stringify(data);  // Send the data as a JSON string
+
+    // Append the input fields to the form
+    form.appendChild(input1);
+
+    // Append the form to the body (it must be in the DOM to submit)
+    document.body.appendChild(form);
+
+    // Submit the form
+    form.submit();
+}
+nextButton.addEventListener('click', function() {
+        localStorage.setItem('sharedTopic', "QUIZ");
+        window.dispatchEvent(new Event('storage'));
+     const loadingText = document.querySelector('.loading-text');
+    loadingText.innerHTML = "Almost ready! Just a moment...";
+    document.getElementById('loader').style.display = 'flex';
+    document.getElementById('message-list').style.display = 'none';
+    sendQuizData(localStorage.getItem('progressTopic'), messageHistory);
+});
+
+window.onload = function () {
+
+    topic = localStorage.getItem('sharedTopic');
+    pregtopic = localStorage.getItem('progressTopic');
+    if (topic === pregtopic){
+    nextButton.style.visibility = 'visible'
+    }
+    else {
+    nextButton.style.visibility = 'hidden'
+    }
+    // Prepare the data to send
+    const topicData = { topic: topic };
+
+    // Fetch the progress data from Flask, sending the topic in the request
+    fetch('/getdata', {
+        method: 'POST', // Use POST to send the topic
+        headers: {
+            'Content-Type': 'application/json', // Specify JSON format
+        },
+        body: JSON.stringify(topicData), // Send topic as JSON in the request body
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        // Extract the user data from the response
+        const userData = data; // Includes user profile, AI persona, and topic description
+        let code = userData.code;
+        console.log(userData)
+        sessionStorage.setItem('userprofilecurrent', JSON.stringify(userData['user profile']));
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        // Send the init prompt after fetching user data
+        sendMessage("initprompt");
+
+    })
+    .catch((error) => console.error('Error fetching progress data:', error));
+};
+
+window.addEventListener('storage', (event) => {
+    if (event.key === 'sharedTopic') {
+        // Reload the page to execute the HTML and JavaScript again
+        if (topic !== localStorage.getItem('sharedTopic')){
+        if (localStorage.getItem('sharedTopic') !== "QUIZ"){
+        window.location.reload();}
+        }
+    }
+});
+
+
+
+
+</script>
+
+
+
+</body>
+</html>

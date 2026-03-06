@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="x-icon" href="{{ url_for('static', filename='Studio-Project black.png') }}">
+    <title>LETSTEA</title>
+<!--	added logo and changed title-->
+    <style>
+:root {
+    --primary-color: #ffb0b0;
+    --secondary-color: #e89d9d;
+    --black: #000000;
+    --white: #ffffff;
+    --gray: #efefef;
+    --gray-2: #757575;
+
+    --facebook-color: #4267B2;
+    --google-color: #DB4437;
+    --twitter-color: #1DA1F2;
+    --insta-color: #E1306C;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100vh;
+}
+
+.col {
+    width: 50%;
+}
+
+.align-items-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 28rem;
+}
+
+.form {
+    padding: 1rem;
+    background-color: var(--white);
+    border-radius: 1.5rem;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    transform: scale(0);
+    transition: .5s ease-in-out;
+    transition-delay: 1s;
+}
+
+.input-group {
+    position: relative;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+#toggle-eye,
+#login-toggle-eye {
+    position: absolute;
+    right: 1rem; /* Keep the margin from the right */
+    top: 1.7rem; /* Initially center vertically */
+    transform: translateY(-50%); /* Adjust the icon vertically to be perfectly centered */
+    cursor: pointer;
+    visibility: hidden; /* Hidden by default */
+}
+
+/* Center the eye icon horizontally based on the input width */
+.input-group input {
+    position: relative;
+    width: 100%;
+    padding: 1rem 3rem;
+    font-size: 1rem;
+    background-color: var(--gray);
+    border-radius: .5rem;
+    border: 0.125rem solid var(--white);
+    outline: none;
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+
+
+
+.input-group i {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    font-size: 1.4rem;
+    color: black;
+}
+
+
+.input-group input:hover {
+    background-color: #FFB0B0;  /* Light pink color */
+    border: 1px solid black;  /* Black outline */
+    transform: scale(1.05);  /* Slightly enlarge the input */
+}
+
+.input-group input:focus {
+    border: 0.125rem solid var(--primary-color);
+}
+
+.form button {
+    cursor: pointer;
+    width: 100%;
+    padding: .6rem 0;
+    border-radius: .5rem;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--black);
+    font-size: 1.2rem;
+    font-weight : 0;
+    //font-family :'"Courier New", monospace';
+    outline: none;
+    transition: background-color 0.3s ease; /* Add transition for smooth effect */
+}
+
+.form button:hover {
+    background-color: #fff;
+    outline: 1px solid black;
+}
+
+.form p {
+    margin: 1rem 0;
+    font-size: .7rem;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.social-list {
+    margin: 2rem 0;
+    padding: 1rem;
+    border-radius: 1.5rem;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    transform: scale(0);
+    transition: .5s ease-in-out;
+    transition-delay: 1.2s;
+}
+
+.social-list>div {
+    color: var(--white);
+    margin: 0 .5rem;
+    padding: .7rem;
+    cursor: pointer;
+    border-radius: .5rem;
+    cursor: pointer;
+    transform: scale(0);
+    transition: .5s ease-in-out;
+}
+
+.social-list>div:nth-child(1) {
+    transition-delay: 1.4s;
+}
+
+.social-list>div:nth-child(2) {
+    transition-delay: 1.6s;
+}
+
+.social-list>div:nth-child(3) {
+    transition-delay: 1.8s;
+}
+
+.social-list>div:nth-child(4) {
+    transition-delay: 2s;
+}
+
+.social-list>div>i {
+    font-size: 1.5rem;
+    transition: .4s ease-in-out;
+}
+
+.social-list>div:hover i {
+    transform: scale(1.5);
+}
+
+.facebook-bg {
+    background-color: var(--facebook-color);
+}
+
+.google-bg {
+    background-color: var(--google-color);
+}
+
+.twitter-bg {
+    background-color: var(--twitter-color);
+}
+
+.insta-bg {
+    background-color: var(--insta-color);
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.container.sign-in .form.sign-in,
+.container.sign-in .social-list.sign-in,
+.container.sign-in .social-list.sign-in>div,
+.container.sign-up .form.sign-up,
+.container.sign-up .social-list.sign-up,
+.container.sign-up .social-list.sign-up>div {
+    transform: scale(1);
+}
+
+.content-row {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 6;
+    width: 100%;
+}
+
+.text {
+    margin: 4rem;
+    color: var(--white);
+}
+
+.text h2 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 2rem 0;
+    transition: 1s ease-in-out;
+}
+
+.text p {
+    font-weight: 600;
+    transition: 1s ease-in-out;
+    transition-delay: .2s;
+}
+
+.img img {
+    width: 30vw;
+    transition: 1s ease-in-out;
+    transition-delay: .4s;
+}
+
+.text.sign-in h2,
+.text.sign-in p,
+.img.sign-in img {
+    transform: translateX(-250%);
+}
+
+.text.sign-up h2,
+.text.sign-up p,
+.img.sign-up img {
+    transform: translateX(250%);
+}
+
+.container.sign-in .text.sign-in h2,
+.container.sign-in .text.sign-in p,
+.container.sign-in .img.sign-in img,
+.container.sign-up .text.sign-up h2,
+.container.sign-up .text.sign-up p,
+.container.sign-up .img.sign-up img {
+    transform: translateX(0);
+}
+
+/* BACKGROUND */
+
+.container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 300vw;
+    transform: translate(35%, 0);
+    background-image: linear-gradient(-45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    transition: 1s ease-in-out;
+    z-index: 6;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-bottom-right-radius: max(50vw, 50vh);
+    border-top-left-radius: max(50vw, 50vh);
+}
+
+.container.sign-in::before {
+    transform: translate(0, 0);
+    right: 50%;
+}
+
+.container.sign-up::before {
+    transform: translate(100%, 0);
+    right: 50%;
+}
+
+/* RESPONSIVE */
+
+@media only screen and (max-width: 425px) {
+
+    .container::before,
+    .container.sign-in::before,
+    .container.sign-up::before {
+        height: 100vh;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 0;
+        z-index: 0;
+        transform: none;
+        right: 0;
+    }
+
+    /* .container.sign-in .col.sign-up {
+        transform: translateY(100%);
+    } */
+
+    .container.sign-in .col.sign-in,
+    .container.sign-up .col.sign-up {
+        transform: translateY(0);
+    }
+
+    .content-row {
+        align-items: flex-start !important;
+    }
+
+    .content-row .col {
+        transform: translateY(0);
+        background-color: unset;
+    }
+
+    .col {
+        width: 100%;
+        position: absolute;
+        padding: 2rem;
+        background-color: var(--white);
+        border-top-left-radius: 2rem;
+        border-top-right-radius: 2rem;
+        transform: translateY(100%);
+        transition: 1s ease-in-out;
+    }
+
+    .row {
+        align-items: flex-end;
+        justify-content: flex-end;
+    }
+
+    .form,
+    .social-list {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .text {
+        margin: 0;
+    }
+
+    .text p {
+        display: none;
+    }
+
+    .text h2 {
+        margin: .5rem;
+        font-size: 2rem;
+    }
+}
+	.toast {
+            position: fixed;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            font-size: 0.9rem;
+            animation: fadeInOut 4s ease;
+        }
+	input[type="password"]::-ms-reveal {
+    display: none;  /* Hide the password toggle in Edge */
+}
+	input[type="password"]::-webkit-contacts-auto-fill-button {
+    display: none;  /* Hide the password toggle in WebKit browsers (Chrome, Safari) */
+}</style>
+</head>
+<body>
+
+<div id="container" class="container">
+		<!-- FORM SECTION -->
+		<div class="row">
+			<!-- SIGN UP -->
+			<div class="col align-items-center flex-col sign-up">
+				<div class="form-wrapper align-items-center">
+					<div class="form sign-up" style="font-weight: 0; font-family: 'Courier New', Courier, monospace;">
+						<div class="input-group">
+							<i class='bx bxs-user'></i>
+							<input style="font-weight: 0; font-family: 'Courier New', Courier, monospace;" type="text" id="signup-username" placeholder="Username">
+						</div>
+						<div class="input-group">
+							<i class='bx bx-mail-send'></i>
+							<input style="font-weight: 0; font-family: 'Courier New', Courier, monospace;"type="email" id="signup-email" placeholder="Email">
+						</div>
+						<div class="input-group">
+    <i class='bx bxs-lock-alt'></i>
+    <input style="font-weight: 0; font-family: 'Courier New', Courier, monospace;" type="password" id="signup-password" placeholder="Password">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16" id="toggle-eye" style="position: absolute; right: 1rem; cursor: pointer; visibility: hidden;">
+        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+    </svg>
+</div>
+
+						<div class="input-group">
+
+							<i class='bx bxs-lock-alt'></i>
+							<input style="font-weight: 0; font-family: 'Courier New', Courier, monospace;" type="password" id="signup-confirm-password" placeholder="Confirm password">
+						</div>
+						<button onclick="handleSignup()">
+							<div style="font-weight: 0; font-family: 'Courier New', Courier, monospace;">
+    sign up
+</div>
+						</button>
+						<p style="font-weight: 0; font-family: 'Courier New', Courier, monospace;">
+							<span style="font-weight: 0; font-family: 'Courier New', Courier, monospace;">
+								Already have an account?
+							</span>
+							<b style="font-weight: 0; font-family: 'Courier New', Courier, monospace;" onclick="toggle()" class="pointer">
+								log in here
+							</b>
+						</p>
+					</div>
+				</div>
+
+			</div>
+			<!-- END SIGN UP -->
+			<!-- login -->
+			<div class="col align-items-center flex-col sign-in">
+				<div class="form-wrapper align-items-center">
+					<div class="form sign-in">
+						<div class="input-group">
+							<i class='bx bxs-user'></i>
+							<input style="font-weight: 0; font-family: 'Courier New', Courier, monospace;" type="text" id="login-username" placeholder="Username">
+						</div>
+						<div class="input-group"><div class="input-group-password">
+							<i class='bx bxs-lock-alt'></i>
+							<input style="font-weight: 0; font-family: 'Courier New', Courier, monospace;" type="password"  id="login-password" placeholder="Password">
+							<svg id="login-toggle-eye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+							</svg></div>
+						</div>
+						<button onclick="handleLogin()">
+							<div style="font-weight: 0; font-family: 'Courier New', Courier, monospace;">
+    log in
+</div>
+						</button>
+						<p>
+							<span style="font-weight: 0; font-family: 'Courier New', Courier, monospace;">
+								Don't have an account?
+							</span>
+							<b style="font-weight: 0; font-family: 'Courier New', Courier, monospace;" onclick="toggle()" class="pointer">
+								Sign up here
+							</b>
+						</p>
+					</div>
+				</div>
+				<div class="form-wrapper">
+
+				</div>
+			</div>
+			<!-- END SIGN IN -->
+		</div>
+		<!-- END FORM SECTION -->
+		<!-- CONTENT SECTION -->
+		<div class="row content-row">
+			<!-- SIGN IN CONTENT -->
+			<div class="col align-items-center flex-col">
+				<div class="text sign-in">
+<h2>Welcome!!!
+					</h2>
+
+				</div>
+				<div class="img sign-in">
+
+				</div>
+			</div>
+			<!-- END SIGN IN CONTENT -->
+			<!-- SIGN UP CONTENT -->
+			<div class="col align-items-center flex-col">
+				<div class="img sign-up">
+
+				</div>
+				<div class="text sign-up">
+					<h2>
+						Let's get<br>the gossip brewing!
+					</h2>
+
+				</div>
+			</div>
+			<!-- END SIGN UP CONTENT -->
+		</div>
+		<!-- END CONTENT SECTION -->
+	</div>
+<div class="toast" id="toast">Action performed successfully!</div>
+
+       <script>
+
+
+
+
+
+
+		   const loginPasswordInput = document.getElementById('login-password');
+const loginEyeIcon = document.getElementById('login-toggle-eye'); // Make sure this icon has this ID
+// Show the eye icon when the user starts typing in the password input field
+loginPasswordInput.addEventListener('input', function() {
+
+    if (loginPasswordInput.value) {
+        loginEyeIcon.style.visibility = 'visible'; // Show eye icon when input is filled
+    } else {
+        loginEyeIcon.style.visibility = 'hidden'; // Hide eye icon when input is empty
+    }
+});
+
+// Toggle password visibility when eye icon is clicked
+loginEyeIcon.addEventListener('click', function() {
+    if (loginPasswordInput.type === 'password') {
+        loginPasswordInput.type = 'text';
+        loginEyeIcon.innerHTML = `
+            <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/>
+            <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/>
+            <path d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/>
+        `;
+    } else {
+        loginPasswordInput.type = 'password';
+        loginEyeIcon.innerHTML = `
+            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+        `;
+    }
+});
+
+
+
+		   const passwordInput = document.getElementById('signup-password');
+const eyeIcon = document.getElementById('toggle-eye');
+
+// Show the eye icon when the user starts typing in the password input field
+passwordInput.addEventListener('input', function() {
+    if (passwordInput.value) {
+        eyeIcon.style.visibility = 'visible'; // Show eye icon when input is filled
+    } else {
+        eyeIcon.style.visibility = 'hidden'; // Hide eye icon when input is empty
+    }
+});
+
+// Toggle password visibility when eye icon is clicked
+eyeIcon.addEventListener('click', function() {
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.innerHTML = `
+            <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/>
+            <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/>
+            <path d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/>
+        `;
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.innerHTML = `
+            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+        `;
+    }
+});
+
+
+
+
+
+
+
+
+
+
+    let container = document.getElementById('container');
+
+    // Toggle function for switching forms
+    function toggle() {
+        container.classList.toggle('sign-in');
+        container.classList.toggle('sign-up');
+    }
+
+    // Show toast message
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+
+    // Redirect based on flag
+    function handleRedirect(flag) {
+        if (flag) {
+            window.location.href = '/learn';
+        } else {
+            window.location.href = '/profiler';
+        }
+    }
+
+    // Handle Sign Up
+function handleSignup() {
+    const usernameField = document.getElementById('signup-username');
+    const emailField = document.getElementById('signup-email');
+    const passwordField = document.getElementById('signup-password');
+    const confirmPasswordField = document.getElementById('signup-confirm-password');
+
+    const username = usernameField.value.trim();
+    const email = emailField.value.trim();
+    const password = passwordField.value.trim();
+    const confirmPassword = confirmPasswordField.value.trim();
+
+    let hasError = false;
+
+    // Clear previous error messages and styles
+    document.querySelectorAll('.input-group').forEach(group => {
+        group.classList.remove('error');
+        group.style.backgroundColor = '';
+        group.querySelector('input').style.border = '';
+    });
+    document.querySelectorAll('.error-message').forEach(msg => msg.remove());
+
+    // Helper function to display error
+    const displayError = (field, message) => {
+        const errorMessage = document.createElement('span');
+        errorMessage.classList.add('error-message');
+        errorMessage.style.color = 'grey';
+        errorMessage.style.fontSize = '12px';
+        errorMessage.style.display = 'block'; // Ensure the message spans the width of the container
+        errorMessage.style.marginTop = '5px';
+        errorMessage.style.textAlign = 'left'; // Align error message to the left
+        errorMessage.textContent = message;
+        field.parentElement.appendChild(errorMessage);
+        field.parentElement.classList.add('error');
+        field.style.border = '1px solid red'; // Add red border to the input field
+        hasError = true;
+    };
+
+    // Validate username
+    if (!username || username.includes(' ') || !/^[a-zA-Z0-9_]+$/.test(username)) {
+        displayError(usernameField, "Username can only contain letters, numbers, or underscores and cannot have spaces.");
+    }
+
+    // Validate email format
+    const validEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!email.match(validEmailRegex)) {
+        displayError(emailField, "Enter a valid email (e.g., @gmail.com, @yahoo.com).");
+    }
+
+    // Validate password
+const validPasswordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/;
+
+// Check if the password matches the regex
+if (!password.match(validPasswordRegex)) {
+    // Check for at least 8 characters
+    if (password.length < 8) {
+        displayError(passwordField, "Password must be at least 8 characters long.");
+    }
+    // Check for at least one uppercase letter
+    else if (!/(?=.*[A-Z])/.test(password)) {
+        displayError(passwordField, "Password must include at least one uppercase letter.");
+    }
+    // Check for at least one lowercase letter
+    else if (!/(?=.*[a-z])/.test(password)) {
+        displayError(passwordField, "Password must include at least one lowercase letter.");
+    }
+    // Check for at least one number
+    else if (!/(?=.*\d)/.test(password)) {
+        displayError(passwordField, "Password must include at least one number.");
+    }
+    // Check for at least one special character
+    else if (!/(?=.*[!@#$%^&*])/.test(password)) {
+        displayError(passwordField, "Password must include at least one special character (e.g. !@#$%^&*).");
+    }
+}
+
+
+    // Validate confirm password
+    if (password !== confirmPassword) {
+        displayError(confirmPasswordField, "Passwords do not match.");
+    }
+
+    if (hasError) return;
+
+    const data = { username, email, password };
+
+    fetch('/create_user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    })
+        .then(response => {
+            if (!response.ok) {
+
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === "success") {
+                    const expireDate = new Date();
+                    expireDate.setTime(expireDate.getTime() + (60*60*1000)); // 1 hour in milliseconds
+                    document.cookie = `username=${username}; expires=${expireDate.toUTCString()}; path=/;`;
+                 showToast("Signup successful!");
+                sessionStorage.setItem('username', username);
+                handleRedirect(data.flag);
+            } else {
+                showToast(data.message || "There was an error. Please try again.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast("An error occurred. Please try again.");
+        });
+}
+
+
+    // Handle Login
+    function handleLogin() {
+    const usernameField = document.getElementById('login-username');
+    const passwordField = document.getElementById('login-password');
+
+    const username = usernameField.value.trim();
+    const password = passwordField.value.trim();
+
+    let hasError = false;
+
+    // Clear previous error messages and styles
+    document.querySelectorAll('.input-group').forEach(group => {
+        group.classList.remove('error');
+        group.style.backgroundColor = '';
+        group.querySelector('input').style.border = '';
+    });
+    document.querySelectorAll('.error-message').forEach(msg => msg.remove());
+
+    // Helper function to display error
+    const displayError = (field, message) => {
+        const errorMessage = document.createElement('span');
+        errorMessage.classList.add('error-message');
+        errorMessage.style.color = 'grey';
+        errorMessage.style.fontSize = '12px';
+        errorMessage.style.display = 'block'; // Ensure the message spans the width of the container
+        errorMessage.style.marginTop = '5px';
+        errorMessage.style.textAlign = 'left'; // Align error message to the left
+        errorMessage.textContent = message;
+        field.parentElement.appendChild(errorMessage);
+        field.parentElement.classList.add('error');
+        field.style.border = '1px solid red'; // Add red border to the input field
+        hasError = true;
+
+    };
+
+    // Validate username
+    if (!username || username.includes(' ') || !/^[a-zA-Z0-9_]+$/.test(username)) {
+        displayError(usernameField, "Username can only contain letters, numbers, or underscores and cannot have spaces.");
+    }
+
+    // Validate password
+    if (!password || password.length < 8) {
+        displayError(passwordField, "Password must be at least 8 characters long.");
+    }
+
+    if (hasError) return;
+
+    const data = { username, password };
+
+    fetch('/dologin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    })
+        .then(response => {
+            if (!response.ok) {
+
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === "success") {
+                    const expireDate = new Date();
+                    expireDate.setTime(expireDate.getTime() + (60*60*1000)); // 1 hour in milliseconds
+                    document.cookie = `username=${username}; expires=${expireDate.toUTCString()}; path=/;`;
+                    showToast("Login successful!");
+                    sessionStorage.setItem('username', username);
+                handleRedirect(data.flag);
+            } else {
+                showToast(data.message || "There was an error. Please try again.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast("An error occurred. Please try again.");
+        });
+}
+
+        // Initialize the form state
+        setTimeout(() => {
+            container.classList.add('sign-in');
+        }, 200);
+
+    </script>
+</body>
+</html>
